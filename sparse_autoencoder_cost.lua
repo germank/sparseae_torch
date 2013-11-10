@@ -43,25 +43,6 @@ function sparseAutoencoderCost(theta, visibleSize, hiddenSize,
     -- the gradient descent update to W1 would be W1 := W1 - alpha * W1grad, and similarly for W2, b1, b2. 
 
    
-    local z2 = W1 * data + b1:expand(b1:size()[1],data:size()[2])
-    local a2 = sigmoid(z2)
-    local z3 = W2 * a2 + b2:expand(b2:size()[1], data:size()[2])
-   
-    local a3 = sigmoid(z3) --
-
-
-    cost = torch.mean(torch.norm(a3 - data, 2, 2)) --norm2 over dimension 2
-      
-    local d3 = torch.cmul(-(data - a3) ,torch.cmul(a3, -a3 + 1))
-   
-    W2grad = d3 * a3:t()/data:size()[2] --?
-    b2grad = torch.mean(d3, 2)
-   
-    local d2 = torch.cmul(W2:t() * d3, torch.cmul(a2, -a2 + 1))
-
-    W1grad = d2 * a2:t()/data:size()[2] --?
-    b1grad = torch.mean(d2, 2)
-   
 
 
     ---------------------------------------------------------------------

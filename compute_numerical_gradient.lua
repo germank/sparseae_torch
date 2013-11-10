@@ -1,4 +1,4 @@
-function computeNumericalGradient(J, theta)
+function computeNumericalGradient(J, theta, n)
     -- numgrad = computeNumericalGradient(J, theta)
     -- theta: a vector of parameters
     -- J: a function that outputs a real-number. Calling y = J(theta) will return the
@@ -6,6 +6,7 @@ function computeNumericalGradient(J, theta)
       
     -- Initialize numgrad with zeros
     local numgrad = torch.zeros(theta:size());
+
 
     ---- ---------- YOUR CODE HERE --------------------------------------
     -- Instructions: 
@@ -17,17 +18,6 @@ function computeNumericalGradient(J, theta)
     -- respect to theta(i).
     --                
     -- Hint: You will probably want to compute the elements of numgrad one at a time. 
-
-    local e = 0.0001
-   
-    local e_i = torch.zeros(theta:size())
-    for i=1,theta:size()[1] do
-        print (i)
-        e_i[i] = e
-      numgrad[i] = (J(theta + e_i) - J(theta - e_i)) / (2*e)
-        e_i[i] = 0
-    end
-
 
 
 

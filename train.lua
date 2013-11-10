@@ -4,8 +4,8 @@
 --  ------------
 -- 
 --  This file contains code that helps you get started on the
---  programming assignment. You will need to complete the code in sampleIMAGES.m,
---  sparseAutoencoderCost.m and computeNumericalGradient.m. 
+--  programming assignment. You will need to complete the code in sample_images.lua,
+--  sparse_autoencoder_cost.lua and compute_numerical_gradient.lua. 
 --  For the purpose of completing the assignment, you do not need to
 --  change the code in this file. 
 --
@@ -30,14 +30,18 @@ beta = 3;            -- weight of sparsity penalty term
 
 require 'sample_images'
 IMAGES = torch.load('IMAGES.th7')
-patches = sample_images(IMAGES);
+patches = sample_images(IMAGES, visibleSize);
 require 'display_network'
-patch_sample={}
-for i=1,200 do
-   patch_sample[#patch_sample+1] = math.random(1,patches:size()[1])
+function pick_random_n(M, n)
+   M_sample={}
+   for i=1,n do
+      M_sample[#M_sample+1] = math.random(1,M:size()[1])
+   end 
+   return M_sample  
 end
+patch_sample=pick_random_n(patches, 200)
 if qt then
-    display_network(patches:index(1, torch.LongTensor(patch_sample)),nil,nil,8)
+    display_network(patches:index(1, torch.LongTensor(patch_sample)),8)
 end
 
 
@@ -87,12 +91,12 @@ cost, grad = sparseAutoencoderCost(theta, visibleSize, hiddenSize, lambda,
 -- simple function.  After you have implemented computeNumericalGradient.m,
 -- run the following: 
 require 'check_numerical_gradient'
---checkNumericalGradient();
+checkNumericalGradient();
 
 -- Now we can use it to check your cost function and derivative calculations
 -- for the sparse autoencoder.  
 require 'compute_numerical_gradient'
---[[numgrad = computeNumericalGradient( function(x) return 
+numgrad = computeNumericalGradient( function(x) return 
                                                 sparseAutoencoderCost(x, visibleSize, 
                                                   hiddenSize, lambda, 
                                                   sparsityParam, beta, 
@@ -105,7 +109,7 @@ print(grad);
 diff = torch.norm(numgrad-grad)/torch.norm(numgrad+grad);
 print(diff); -- Should be small. In our implementation, these values are
             -- usually less than 1e-9.
---]]
+            --
             -- When you got this working, Congratulations!!! 
 
 ----======================================================================
@@ -120,14 +124,14 @@ theta = initializeParameters(hiddenSize, visibleSize);
 require 'optim'
 minFunc = optim.lbfgs     -- Here, we use L-BFGS to optimize our cost
                           -- function. Generally, for minFunc to work, you
-                          -- need a function pointer with two outputs: the
+                          -- need to send a function with two outputs: the
                           -- function value and the gradient. In our problem,
-                          -- sparseAutoencoderCost.m satisfies this.
-state = {}
-state.maxIter = 400;      -- Maximum number of iterations of L-BFGS to run 
+                          -- sparseAutoencoderCos satisfies this.
+options = {}
+options.maxIter = 400;      -- Maximum number of iterations of L-BFGS to run 
 
 
-opttheta, cost = minFunc( function(p) return sparseAutoencoderCost(p, 
+opttheta, cost = minFunc( function(x) return sparseAutoencoderCost(x, 
                                    visibleSize, hiddenSize, 
                                    lambda, sparsityParam, 
                                    beta, patches:t()) end, 
@@ -137,5 +141,5 @@ opttheta, cost = minFunc( function(p) return sparseAutoencoderCost(p,
 ---- STEP 5: Visualization 
 
 W1 = opttheta[{{1,hiddenSize*visibleSize}}]:reshape(hiddenSize, visibleSize);
-display_network(W1:t(), 12); 
+display_network(W1, 12); 
 --print -djpeg weights.jpg   -- save the visualization to a file 

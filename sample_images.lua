@@ -1,7 +1,7 @@
-function sample_images(IMAGES)
+function sample_images(IMAGES, npixels)
    -- Returns 10000 patches for training
    
-   local patchsize = 8  -- we'll use 8x8 patches 
+   local patchsize = math.sqrt(npixels)  -- we'll use 8x8 patches 
    local numpatches = 10000
    
    -- Initialize patches with zeros.  Your code will fill in this matrix--one
@@ -20,23 +20,6 @@ function sample_images(IMAGES)
    --  more details.) As a second example, IMAGES[{{1},{21,30},{21,30}}][1] is an image
    --  patch corresponding to the pixels in the block (21,21) to (30,30) of
    --  Image 1
-   local imgsize = IMAGES:size(2)
-   local row = 1
-   local col = 1
-   local img = 1
-   for i=1,numpatches do
-      patches[i] = 
-         IMAGES[{{img},{row,row+patchsize-1},{col,col+patchsize-1}}][1]
-      col = col + patchsize
-      if col >= imgsize then
-         col = 1
-         row = row + patchsize
-      end
-      if row >= imgsize then
-         row = 1
-         img = img + 1
-      end
-   end
 
 
    
